@@ -25,7 +25,10 @@ caddr.org is a simple service that enables the creation of content-defined cross
 	const srcUrl = new URLSearchParams(location.search).get('src');
 	if(srcUrl){
 		getHash36(srcUrl).then(hash36 => {
-			location.href = 'https://' + hash36 + '.caddr.org/?src=' + encodeURIComponent(srcUrl)
+			location.href = 'https://' + hash36 + '.caddr.org/?src=' + 
+				encodeURIComponent(srcUrl)
+				.replaceAll('%3A', ':')
+				.replaceAll('%2F', '/')
 		})
 	}
 </script>
