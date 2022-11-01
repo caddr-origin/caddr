@@ -3,3 +3,29 @@
 <p>
 caddr.org is a simple service that enables the creation of content-defined cross-site services
 </p>
+
+<script>
+	function baseConvertBigInt(digits, srcb, destb){
+	    let val = 0n
+	    srcb = BigInt(srcb)
+	    destb = BigInt(destb)
+	    for(let i = 0; i < digits.length; i++){
+	        val = val * srcb + BigInt(digits[i])
+	    }
+	    let res = []
+	    while(val !== 0n){
+	        res.unshift(Number(val % destb))
+	        val = val / destb
+	    }
+	    return res
+	}
+	async function getHash36(url){
+		return baseConvertBigInt(new Uint8Array(await fetch(url).then(k => k.arrayBuffer()).then(k => crypto.subtle.digest('SHA-256', k))), 256, 36).map(k => k.toString(36)).join('')	
+	}
+	const srcUrl = new URLSearchParams(location.search).get('src');
+	if(srcUrl){
+		getHash36(srcUrl).then(hash36 => {
+			location.href = 'https://' + hash36 + '.caddr.org/?src=' + encodeURIComponent(srcUrl)
+		})
+	}
+</script>
