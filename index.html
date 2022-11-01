@@ -28,12 +28,13 @@ caddr.org is a simple service that enables the creation of content-defined cross
 	    }
 	    return res
 	}
-	async function getHash36(url){
-		return baseConvertBigInt(new Uint8Array(await fetch(url).then(k => k.arrayBuffer()).then(k => crypto.subtle.digest('SHA-256', k))), 256, 36).map(k => k.toString(36)).join('')	
+	async function getHash32(url){
+		const base32dict = 'abcdefghijklmnopqrstuvwxyz234567';
+		return baseConvertBigInt(new Uint8Array(await fetch(url).then(k => k.arrayBuffer()).then(k => crypto.subtle.digest('SHA-256', k))), 256, 32).map(k => base32dict[k]).join('')	
 	}
 	const srcUrl = new URLSearchParams(location.search).get('src');
 	if(srcUrl){
-		getHash36(srcUrl).then(hash36 => {
+		getHash32(srcUrl).then(hash36 => {
 			location.href = 'https://' + hash36 + '.caddr.org/?src=' + 
 				encodeURIComponent(srcUrl)
 				.replaceAll('%3A', ':')
