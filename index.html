@@ -22,7 +22,7 @@ caddr.org is a simple service that enables the creation of content-defined cross
 		while ((n /= 32n) !== 0n) res = base32dict[Number(n % 32n)] + res;
 		return res
 	}
-	const srcUrl = new URLSearchParams(location.search).get('src') || "https://caddr.org/demo.js";
+	const srcUrl = new URLSearchParams(location.search).get('src');
 	if(srcUrl){
 		getHash32(srcUrl).then(hash36 => {
 			location.href = 'https://' + hash36 + '.caddr.org/' + 
