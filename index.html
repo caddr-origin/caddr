@@ -1,11 +1,76 @@
 <!doctype html>
 <meta charset="utf-8">
+<style>
+	body {
+		max-width: 600px;
+		margin:  0 auto;
+		padding:  20px;
+	}
+	h1 {
+		margin-bottom:  0;
+	}
+</style>
+<title>caddr.org: content addressed origin</title>
+<h1>caddr.org: <u>c</u>ontent <u>addr</u>essed <u>or</u>i<u>g</u>in</h1>
+<i>build decentralized cross site services with browser apis today</i>
 
-<title>caddr.org</title>
-<h1>caddr.org</h1>
+
 
 <p>
-caddr.org is a simple service that enables the creation of content-defined cross-site services
+	Browser resources such as localStorage, IndexedDB, and WebAuthn follow the "same-origin policy" and are locked to a particular domain. This makes it difficult to create decentralized services that are meant to work across different websites. 
+</p>
+
+<p>
+	With caddr.org, the "origin" is defined by the content of the code that is being run, serving as a credibly neutral platform for building shared resources.
+</p>
+
+
+<h3>what can you do with caddr.org?</h3>
+
+<ul>
+	<li>build a cross-site decentralized identity system powered by WebAuthn</li>
+	<li>create a metamask-like ethereum wallet that works on all browsers without having to install any extensions</li>
+	<li>store an web-wide scavenger hunt where people can collect items from different websites</li>
+	<li>creating a system for sharing data between interactive widgets across different apps</li>
+	<li>check and fall back on the integrity of several untrusted ipfs gateways</li>
+</ul>
+
+<h3>how does caddr.org work?</h3>
+<p>
+	caddr.org simply returns a page which consists of a script tag with whatever "src" is passed in through the query string, and an "integrity" attribute that corresponds to the base64-encoded version of the subdomain it is loaded from. 
+</p>
+
+<tt>https://<span style="color: green">jyhensccrcfgezcf6f46ea6fxbrc7ul44kzlc2vrx63od64a47jq</span>.caddr.org/?src=<span style="color:  blue;">https://caddr.org/demo.js</span></tt>
+
+<p>
+	loads a page that contains
+</p>
+
+<pre>
+&lt;script
+  integrity="<span style="color: green">sha256-Tg5GyEKIimJkRfF54gPFuGIv0XzisrFqsb+24fuA59M=</span>"
+  src="<span style="color:  blue;">https://caddr.org/demo.js</span>"&gt;
+&lt;/script&gt;
+</pre>
+
+<p>
+	if you examine the source code of an actual page, you'll see that it's slightly different from what is described above. The script tags are generated dynamically in Javascript so that it can fall-back to several potential sources in the case of failure. Additionally, a service worker is installed so that subsequent page loads are immune even in the event that caddr.org is compromised. 
+</p>
+
+<h3>what's next?</h3>
+
+<p>
+	Ultimately we would like browsers to natively implement resolvers for urls that are in the format of <tt>*.caddr.org</tt>, similar to existing built-in pages such as <tt>about:blank</tt>. In the mean time, we would like to get <tt>caddr.org</tt> added to the <a href="https://publicsuffix.org/">public suffix list</a>. 
+</p>
+
+<p>
+	While the domain has been renewed for 10 years, its continued stewardship still represents a meaningful single point of failure. Ideally we could transfer the ownership to an organization which can remain credibly neutral. 
+</p>
+
+<h3>get started</h3>
+
+<p>
+	Below is a simple tool where you can paste in the URL for some script file and it will automatically hash the contents and redirect you to the equivalent content-addressed caddr.org page. 
 </p>
 
 <form method="GET" action="/">
@@ -13,13 +78,21 @@ caddr.org is a simple service that enables the creation of content-defined cross
 	<button type="submit">Go</button>
 </form>
 
+<p>
+	Alternatively, you can manually calculate the subdomain from a local file by running the following shell script. 
+</p>
+
+<pre>
+sha256sum FILENAME.js | awk '{ print $1 }' | xxd -r -p | base32 | sed 's/=//g'
+</pre>
+
 <script>
 	async function getHash32(url){
-		const base32dict = 'abcdefghijklmnopqrstuvwxyz234567';
-		let n = new Uint8Array(await fetch('/demo.js').then(k => k.arrayBuffer()).then(k => crypto.subtle.digest('SHA-256', k)))
-			.reduce((acc, k) => acc * 256n + BigInt(k), 0n) * 256n**3n / 32n**3n
-		let res = ''
-		while ((n /= 32n) !== 0n) res = base32dict[Number(n % 32n)] + res;
+		let n = new Uint8Array(await fetch(url).then(k => k.arrayBuffer(), err => {
+			alert('Unable to fetch the contents of ' + url + '\n\nThis is likely due to a missing Access-Control-Allow-Origin CORS header.')
+		}).then(k => crypto.subtle.digest('SHA-256', k)))
+			.reduce((acc, k) => acc * 256n + BigInt(k), 0n) * 256n**3n / 32n**3n, res = ''
+		while ((n /= 32n) !== 0n) res = 'abcdefghijklmnopqrstuvwxyz234567'[Number(n % 32n)] + res;
 		return res
 	}
 	const srcUrl = new URLSearchParams(location.search).get('src');
@@ -32,3 +105,10 @@ caddr.org is a simple service that enables the creation of content-defined cross
 		})
 	}
 </script>
+
+
+<h3>misc</h3>
+
+<p>
+	The name is pronounced "kuh-duh-dur" as traditional in the lisp community for the abbreviation of <tt>(car (cdr (cdr x)))</tt> which grabs third item in a linked list.
+</p>
