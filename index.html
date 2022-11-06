@@ -1,13 +1,21 @@
 <!doctype html>
 <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 <style>
 	body {
 		max-width: 600px;
 		margin:  0 auto;
 		padding:  20px;
+
 	}
 	h1 {
 		margin-bottom:  0;
+	}
+	pre {
+		word-wrap:  break-word;
+    	white-space: pre-wrap;
+	    border-left: 5px solid #ddd;
+	    padding-left: 15px;
 	}
 </style>
 <title>caddr.org: content addressed origin</title>
@@ -15,9 +23,8 @@
 <i>build decentralized cross site services with browser apis today</i>
 
 
-
 <p>
-	Browser resources such as localStorage, IndexedDB, and WebAuthn follow the "same-origin policy" and are locked to a particular domain. This makes it difficult to create decentralized services that are meant to work across different websites. 
+	Browser resources such as localStorage, IndexedDB, and WebAuthn follow the <a href="https://developer.mozilla.org/en-US/docs/Web/Security/Same-origin_policy">"same-origin policy"</a> and are locked to a particular domain. This makes it difficult to create decentralized services that are meant to work across different websites. 
 </p>
 
 <p>
@@ -40,7 +47,11 @@
 	caddr.org simply returns a page which consists of a script tag with whatever "src" is passed in through the query string, and an "integrity" attribute that corresponds to the base64-encoded version of the subdomain it is loaded from. 
 </p>
 
-<tt>https://<span style="color: green">jyhensccrcfgezcf6f46ea6fxbrc7ul44kzlc2vrx63od64a47jq</span>.caddr.org/?src=<span style="color:  blue;">https://caddr.org/demo.js</span></tt>
+<p>
+	for example
+</p>
+
+<pre>https://<span style="color: green">jyhensccrcfgezcf6f46ea6fxbrc7ul44kzlc2vrx63od64a47jq</span>.caddr.org/?src=<span style="color:  blue;">https://caddr.org/demo.js</span></pre>
 
 <p>
 	loads a page that contains
@@ -54,7 +65,11 @@
 </pre>
 
 <p>
-	if you examine the source code of an actual page, you'll see that it's slightly different from what is described above. The script tags are generated dynamically in Javascript so that it can fall-back to several potential sources in the case of failure. Additionally, a service worker is installed so that subsequent page loads are immune even in the event that caddr.org is compromised. 
+	Note that the embedding website is still "responsible" for hosting the contents of the script that is to be loaded— none of the scripts are hosted on caddr.org.
+</p>
+
+<p>
+	If you examine the source code of an actual page, you'll see that it's slightly different from what is described above. The script tags are generated dynamically in Javascript so that it can fall-back to several potential sources in the case of failure. Additionally, a service worker is installed so that subsequent page loads are immune even in the event that caddr.org is compromised. 
 </p>
 
 <h3>what's next?</h3>
@@ -65,6 +80,9 @@
 
 <p>
 	While the domain has been renewed for 10 years, its continued stewardship still represents a meaningful single point of failure. Ideally we could transfer the ownership to an organization which can remain credibly neutral. 
+</p>
+<p>
+	At some point in the future, it may be possible that vulnerabilities are discovered in SHA-256 that compromise its viability as the basis for a content-addressing scheme. However the only other browser-supported hashing schemes SHA-386 and SHA-512 are not viable alternatives given the maximum length of a subdomain is 63 letters (<a href="https://www.ietf.org/rfc/rfc1035.txt">RFC-1035</a>). This is also what necessitates the current base36 encoding (as regular hexadecimal would require 64 letters). 
 </p>
 
 <h3>get started</h3>
@@ -109,6 +127,6 @@ sha256sum FILENAME.js | awk '{ print $1 }' | xxd -r -p | base32 | sed 's/=//g'
 
 <h3>misc</h3>
 
-<p>
-	The name is pronounced "kuh-duh-dur" as traditional in the lisp community for the abbreviation of <tt>(car (cdr (cdr x)))</tt> which grabs third item in a linked list.
+<p title="if the linked list were assigned to a variable named `web` then one might be tempted to call this web[3]">
+	The name is pronounced "kuh-duh-dur" as traditional in the lisp community for the abbreviation of <tt>(car (cdr (cdr x)))</tt> which returns the third item in a linked list.
 </p>
