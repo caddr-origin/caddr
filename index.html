@@ -82,7 +82,7 @@
 	While the domain has been renewed for 10 years, its continued stewardship still represents a meaningful single point of failure. Ideally we could transfer the ownership to an organization which can remain credibly neutral. 
 </p>
 <p>
-	At some point in the future, it may be possible that vulnerabilities are discovered in SHA-256 that compromise its viability as the basis for a content-addressing scheme. However the only other browser-supported hashing schemes SHA-386 and SHA-512 are not viable alternatives given the maximum length of a subdomain is 63 letters (<a href="https://www.ietf.org/rfc/rfc1035.txt">RFC-1035</a>). This is also what necessitates the current base36 encoding (as regular hexadecimal would require 64 letters). 
+	At some point in the future, it may be possible that vulnerabilities are discovered in SHA-256 that compromise its viability as the basis for a content-addressing scheme. However the only other browser-supported hashing schemes SHA-386 and SHA-512 are not viable alternatives given the maximum length of a subdomain is 63 letters (<a href="https://www.ietf.org/rfc/rfc1035.txt">RFC-1035</a>). This is also what necessitates the current base32 encoding (as regular hexadecimal would require 64 letters). 
 </p>
 
 <h3>get started</h3>
@@ -115,8 +115,8 @@ sha256sum FILENAME.js | awk '{ print $1 }' | xxd -r -p | base32 | sed 's/=//g'
 	}
 	const srcUrl = new URLSearchParams(location.search).get('src');
 	if(srcUrl){
-		getHash32(srcUrl).then(hash36 => {
-			location.href = 'https://' + hash36 + '.caddr.org/' + 
+		getHash32(srcUrl).then(hash32 => {
+			location.href = 'https://' + hash32 + '.caddr.org/' + 
 				location.search
 				.replaceAll('%3A', ':')
 				.replaceAll('%2F', '/')
