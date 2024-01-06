@@ -72,14 +72,27 @@
 	If you examine the source code of an actual page, you'll see that it's slightly different from what is described above. The script tags are generated dynamically in Javascript so that it can fall-back to several potential sources in the case of failure. 
 </p>
 
-<h3>what's next?</h3>
+<h3>security</h3>
 
 <p>
-	Ultimately we would like browsers to natively implement resolvers for urls that are in the format of <tt>*.caddr.org</tt>, similar to existing built-in pages such as <tt>about:blank</tt>. In the mean time, we would like to get <tt>caddr.org</tt> added to the <a href="https://publicsuffix.org/">public suffix list</a>. 
+	Ultimately we would like browsers to natively implement resolvers for urls that are in the format of <tt>*.caddr.org</tt>, similar to existing built-in pages such as <tt>about:blank</tt>. If you work on a browser, or know anyone who does, help towards native implementations would be much appreciated!
+</p>
+<p>
+	Since October 11, 2023, *.caddr.org has been added to the <a href="https://hstspreload.org/?domain=caddr.org">HSTS Preload List</a> which will force it to be loaded with HTTPS. 
+</p>
+<p>
+	A <a href="https://github.com/caddr-org/browser-extension">browser extension</a> has been developed to serve as an additional layer of security that guards against compromises of the caddr.org domain. 
 </p>
 
 <p>
-	While the domain has been renewed for 10 years, its continued stewardship still represents a meaningful single point of failure. Ideally we could transfer the ownership to an organization which can remain credibly neutral. 
+	We would like to get <tt>caddr.org</tt> added to the <a href="https://publicsuffix.org/">public suffix list</a>, help on putting together a submission would also be appreciated. 
+</p>
+<p>
+	The domain has been renewed ahead of time for 10 years, but as a piece of web infrastructure, it might be ideal if stewardship could be transferred to a credible organization. 
+</p>
+
+<p>
+	
 </p>
 <p>
 	At some point in the future, it may be possible that vulnerabilities are discovered in SHA-256 that compromise its viability as the basis for a content-addressing scheme. However the only other browser-supported hashing schemes SHA-386 and SHA-512 are not viable alternatives given the maximum length of a subdomain is 63 letters (<a href="https://www.ietf.org/rfc/rfc1035.txt">RFC-1035</a>). This is also what necessitates the current base32 encoding (as regular hexadecimal would require 64 letters). 
@@ -124,6 +137,9 @@ sha256sum FILENAME.js | awk '{ print $1 }' | xxd -r -p | base32 | sed 's/=//g'
 	}
 </script>
 
+<a id="fail"></a>
+<h3>source integrity error</h3>
+TODO: explanation of content addressed origin integrity error
 
 <h3>misc</h3>
 
