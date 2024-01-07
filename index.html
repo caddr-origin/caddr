@@ -78,7 +78,7 @@
 	Ultimately we would like browsers to natively implement resolvers for urls that are in the format of <tt>*.caddr.org</tt>, similar to existing built-in pages such as <tt>about:blank</tt>. If you work on a browser, or know anyone who does, help towards native implementations would be much appreciated!
 </p>
 <p>
-	Since October 11, 2023, *.caddr.org has been added to the <a href="https://hstspreload.org/?domain=caddr.org">HSTS Preload List</a> which will force it to be loaded with HTTPS. 
+	Since October 11, 2023, *.caddr.org has been added to the <a href="https://hstspreload.org/?domain=caddr.org">HSTS Preload List</a> which will force it to be loaded with HTTPS. DNSSEC is also enabled for the domain. Content-Security-Policy is used to enforce the contnets of the page through the headers. 
 </p>
 <p>
 	A <a href="https://github.com/caddr-origin/browser-extension">browser extension</a> has been developed to serve as an additional layer of security that guards against compromises of the caddr.org domain. 
