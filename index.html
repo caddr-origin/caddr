@@ -3,33 +3,132 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <style>
 	body {
-		max-width: 600px;
-		margin:  0 auto;
-		padding:  20px;
-
+		max-width: 680px;
+		margin: 0 auto;
+		padding: 20px;
+		font-family: sans-serif;
+		line-height: 1.5;
 	}
-	h1 {
-		margin-bottom:  0;
-	}
+	h1 { margin-bottom: 0; }
 	pre {
-		word-wrap:  break-word;
-    	white-space: pre-wrap;
-	    border-left: 5px solid #ddd;
-	    padding-left: 15px;
+		word-wrap: break-word;
+		white-space: pre-wrap;
+		border-left: 5px solid #ddd;
+		padding-left: 15px;
+	}
+	.diagram {
+		margin: 1.5em 0;
+		text-align: center;
+	}
+	.diagram svg {
+		max-width: 100%;
+		height: auto;
+	}
+	.diagram figcaption {
+		font-size: 0.85em;
+		color: #555;
+		margin-top: 0.4em;
 	}
 </style>
 <title>caddr.org: content addressed origin</title>
 <h1>caddr.org: <u>c</u>ontent <u>addr</u>essed <u>or</u>i<u>g</u>in</h1>
 <i>build decentralized cross site services with browser apis today</i>
 
-
 <p>
-	Browser resources such as localStorage, IndexedDB, and WebAuthn follow the <a href="https://developer.mozilla.org/en-US/docs/Web/Security/Same-origin_policy">"same-origin policy"</a> and are locked to a particular domain. This makes it difficult to create decentralized services that are meant to work across different websites. 
+	Browser resources such as localStorage, IndexedDB, and WebAuthn follow the <a href="https://developer.mozilla.org/en-US/docs/Web/Security/Same-origin_policy">"same-origin policy"</a> and are locked to a particular domain. This makes it difficult to create decentralized services that are meant to work across different websites.
 </p>
+
+<!-- DIAGRAM 1: The Problem -->
+<figure class="diagram">
+<svg viewBox="0 0 620 210" xmlns="http://www.w3.org/2000/svg" font-family="sans-serif" font-size="13">
+  <!-- site A box -->
+  <rect x="20" y="20" width="160" height="170" rx="8" fill="#fff3f3" stroke="#e88" stroke-width="1.5"/>
+  <text x="100" y="45" text-anchor="middle" font-weight="bold" fill="#c44">site-a.com</text>
+  <rect x="35" y="58" width="130" height="32" rx="4" fill="#fdd" stroke="#e99" stroke-width="1"/>
+  <text x="100" y="79" text-anchor="middle" fill="#833">localStorage</text>
+  <rect x="35" y="98" width="130" height="32" rx="4" fill="#fdd" stroke="#e99" stroke-width="1"/>
+  <text x="100" y="119" text-anchor="middle" fill="#833">IndexedDB</text>
+  <rect x="35" y="138" width="130" height="32" rx="4" fill="#fdd" stroke="#e99" stroke-width="1"/>
+  <text x="100" y="159" text-anchor="middle" fill="#833">WebAuthn keys</text>
+
+  <!-- site B box -->
+  <rect x="220" y="20" width="160" height="170" rx="8" fill="#f3f3ff" stroke="#88e" stroke-width="1.5"/>
+  <text x="300" y="45" text-anchor="middle" font-weight="bold" fill="#44c">site-b.com</text>
+  <rect x="235" y="58" width="130" height="32" rx="4" fill="#ddf" stroke="#99e" stroke-width="1"/>
+  <text x="300" y="79" text-anchor="middle" fill="#338">localStorage</text>
+  <rect x="235" y="98" width="130" height="32" rx="4" fill="#ddf" stroke="#99e" stroke-width="1"/>
+  <text x="300" y="119" text-anchor="middle" fill="#338">IndexedDB</text>
+  <rect x="235" y="138" width="130" height="32" rx="4" fill="#ddf" stroke="#99e" stroke-width="1"/>
+  <text x="300" y="159" text-anchor="middle" fill="#338">WebAuthn keys</text>
+
+  <!-- site C box -->
+  <rect x="420" y="20" width="160" height="170" rx="8" fill="#f3fff3" stroke="#8e8" stroke-width="1.5"/>
+  <text x="500" y="45" text-anchor="middle" font-weight="bold" fill="#484">site-c.com</text>
+  <rect x="435" y="58" width="130" height="32" rx="4" fill="#dfd" stroke="#9e9" stroke-width="1"/>
+  <text x="500" y="79" text-anchor="middle" fill="#383">localStorage</text>
+  <rect x="435" y="98" width="130" height="32" rx="4" fill="#dfd" stroke="#9e9" stroke-width="1"/>
+  <text x="500" y="119" text-anchor="middle" fill="#383">IndexedDB</text>
+  <rect x="435" y="138" width="130" height="32" rx="4" fill="#dfd" stroke="#9e9" stroke-width="1"/>
+  <text x="500" y="159" text-anchor="middle" fill="#383">WebAuthn keys</text>
+
+  <!-- no-entry symbols between boxes -->
+  <line x1="185" y1="105" x2="215" y2="105" stroke="#999" stroke-width="2" stroke-dasharray="4,3"/>
+  <text x="200" y="100" text-anchor="middle" font-size="18" fill="#c00">⊘</text>
+  <line x1="385" y1="105" x2="415" y2="105" stroke="#999" stroke-width="2" stroke-dasharray="4,3"/>
+  <text x="400" y="100" text-anchor="middle" font-size="18" fill="#c00">⊘</text>
+</svg>
+<figcaption>Each site's browser storage is siloed by origin — they cannot share data.</figcaption>
+</figure>
 
 <p>
 	With caddr.org, the "origin" is defined by the content of the code that is being run, serving as a credibly neutral platform for building shared resources.
 </p>
+
+<!-- DIAGRAM 2: The Solution -->
+<figure class="diagram">
+<svg viewBox="0 0 620 262" xmlns="http://www.w3.org/2000/svg" font-family="sans-serif" font-size="13">
+  <!-- shared origin box at center bottom -->
+  <rect x="170" y="120" width="280" height="136" rx="8" fill="#fffbe6" stroke="#c90" stroke-width="2"/>
+  <text x="310" y="142" text-anchor="middle" font-weight="bold" fill="#a60">[hash].caddr.org</text>
+  <rect x="185" y="150" width="250" height="28" rx="4" fill="#ffeaa0" stroke="#c90" stroke-width="1"/>
+  <text x="310" y="169" text-anchor="middle" fill="#765">shared localStorage</text>
+  <rect x="185" y="184" width="250" height="28" rx="4" fill="#ffeaa0" stroke="#c90" stroke-width="1"/>
+  <text x="310" y="203" text-anchor="middle" fill="#765">shared IndexedDB</text>
+  <rect x="185" y="218" width="250" height="28" rx="4" fill="#ffeaa0" stroke="#c90" stroke-width="1"/>
+  <text x="310" y="237" text-anchor="middle" fill="#765">shared WebAuthn keys</text>
+
+  <!-- site A -->
+  <rect x="20" y="20" width="120" height="50" rx="6" fill="#f3f3ff" stroke="#88e" stroke-width="1.5"/>
+  <text x="80" y="50" text-anchor="middle" font-weight="bold" fill="#44c">site-a.com</text>
+
+  <!-- site B -->
+  <rect x="250" y="20" width="120" height="50" rx="6" fill="#fff3f3" stroke="#e88" stroke-width="1.5"/>
+  <text x="310" y="50" text-anchor="middle" font-weight="bold" fill="#c44">site-b.com</text>
+
+  <!-- site C -->
+  <rect x="480" y="20" width="120" height="50" rx="6" fill="#f3fff3" stroke="#8e8" stroke-width="1.5"/>
+  <text x="540" y="50" text-anchor="middle" font-weight="bold" fill="#484">site-c.com</text>
+
+  <!-- arrows from sites to shared origin -->
+  <line x1="100" y1="70" x2="228" y2="122" stroke="#999" stroke-width="1.5" marker-end="url(#arr)"/>
+  <line x1="310" y1="70" x2="310" y2="118" stroke="#999" stroke-width="1.5" marker-end="url(#arr)"/>
+  <line x1="520" y1="70" x2="392" y2="122" stroke="#999" stroke-width="1.5" marker-end="url(#arr)"/>
+
+  <text x="153" y="102" text-anchor="middle" font-size="11" fill="#888">embeds via</text>
+  <text x="153" y="115" text-anchor="middle" font-size="11" fill="#888">&lt;iframe&gt;</text>
+  <text x="326" y="97" text-anchor="start" font-size="11" fill="#888">embeds via</text>
+  <text x="326" y="110" text-anchor="start" font-size="11" fill="#888">&lt;iframe&gt;</text>
+  <text x="465" y="102" text-anchor="middle" font-size="11" fill="#888">embeds via</text>
+  <text x="465" y="115" text-anchor="middle" font-size="11" fill="#888">&lt;iframe&gt;</text>
+
+  <defs>
+    <marker id="arr" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L8,3 z" fill="#999"/>
+    </marker>
+  </defs>
+</svg>
+<figcaption>All sites embedding the same script share one content-addressed origin — and therefore can share the same browser storage.</figcaption>
+</figure>
 
 
 <h3>what can you do with caddr.org?</h3>
@@ -44,14 +143,49 @@
 
 <h3>how does caddr.org work?</h3>
 <p>
-	caddr.org simply returns a page which consists of a script tag with whatever "src" is passed in through the query string, and an "integrity" attribute that corresponds to the base64-encoded version of the subdomain it is loaded from. 
+	caddr.org simply returns a page which consists of a script tag with whatever "src" is passed in through the query string, and an "integrity" attribute that corresponds to the base64-encoded version of the subdomain it is loaded from.
 </p>
+
+<!-- DIAGRAM 3: URL Anatomy -->
+<figure class="diagram">
+<svg viewBox="0 0 600 155" xmlns="http://www.w3.org/2000/svg" font-family="monospace" font-size="12">
+  <defs>
+    <marker id="darr" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto">
+      <path d="M0,0 L8,4 L0,8 z" fill="#1a8a1a"/>
+    </marker>
+    <marker id="dbarr" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto">
+      <path d="M0,0 L8,4 L0,8 z" fill="#0055cc"/>
+    </marker>
+  </defs>
+
+  <!-- Single-line URL -->
+  <text x="10" y="30" fill="#555">https://</text>
+  <rect x="68" y="16" width="148" height="22" rx="3" fill="#e6f4e6" stroke="#1a8a1a" stroke-width="1.5"/>
+  <text x="142" y="31" text-anchor="middle" fill="#1a8a1a" font-weight="bold">jyhenscc…d64a47jq</text>
+  <text x="218" y="30" fill="#555">.caddr.org/?src=</text>
+  <rect x="338" y="16" width="148" height="22" rx="3" fill="#e6eeff" stroke="#0055cc" stroke-width="1.5"/>
+  <text x="412" y="31" text-anchor="middle" fill="#0055cc" font-weight="bold">https://…/demo.js</text>
+
+  <!-- Arrow + label for hash -->
+  <line x1="142" y1="39" x2="142" y2="72" stroke="#1a8a1a" stroke-width="1.5" marker-end="url(#darr)"/>
+  <rect x="16" y="74" width="252" height="34" rx="4" fill="#f0faf0" stroke="#1a8a1a" stroke-width="1"/>
+  <text x="142" y="89" text-anchor="middle" fill="#1a8a1a" font-family="sans-serif" font-size="11" font-weight="bold">SHA-256 of the script, base32-encoded</text>
+  <text x="142" y="103" text-anchor="middle" fill="#1a8a1a" font-family="sans-serif" font-size="11">52 chars — fits a DNS subdomain (max 63)</text>
+
+  <!-- Arrow + label for src -->
+  <line x1="412" y1="39" x2="412" y2="72" stroke="#0055cc" stroke-width="1.5" marker-end="url(#dbarr)"/>
+  <rect x="296" y="74" width="290" height="34" rx="4" fill="#f0f0ff" stroke="#0055cc" stroke-width="1"/>
+  <text x="441" y="89" text-anchor="middle" fill="#0055cc" font-family="sans-serif" font-size="11" font-weight="bold">The script to load</text>
+  <text x="441" y="103" text-anchor="middle" fill="#0055cc" font-family="sans-serif" font-size="11">hosted anywhere (needs CORS header)</text>
+</svg>
+<figcaption>Anatomy of a caddr.org URL.</figcaption>
+</figure>
 
 <p>
 	for example
 </p>
 
-<pre>https://<span style="color: green">jyhensccrcfgezcf6f46ea6fxbrc7ul44kzlc2vrx63od64a47jq</span>.caddr.org/?src=<span style="color:  blue;">https://caddr-origin.github.io/examples/hello-world/demo.js</span></pre>
+<pre>https://<span style="color: green">jyhensccrcfgezcf6f46ea6fxbrc7ul44kzlc2vrx63od64a47jq</span>.caddr.org/?src=<span style="color: blue;">https://caddr-origin.github.io/examples/hello-world/demo.js</span></pre>
 
 <p>
 	loads a page that contains
@@ -60,48 +194,161 @@
 <pre>
 &lt;script
   integrity="<span style="color: green">sha256-Tg5GyEKIimJkRfF54gPFuGIv0XzisrFqsb+24fuA59M=</span>"
-  src="<span style="color:  blue;">https://caddr-origin.github.io/examples/hello-world/demo.js</span>"&gt;
+  src="<span style="color: blue;">https://caddr-origin.github.io/examples/hello-world/demo.js</span>"&gt;
 &lt;/script&gt;
 </pre>
+
+<!-- DIAGRAM 4: Request Flow (sequence diagram) -->
+<figure class="diagram">
+<svg viewBox="0 0 640 420" xmlns="http://www.w3.org/2000/svg" font-family="sans-serif" font-size="12">
+  <defs>
+    <marker id="ra" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <path d="M0,0 L8,3 L0,6 z" fill="#555"/>
+    </marker>
+    <marker id="raret" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <path d="M0,0 L8,3 L0,6 z" fill="#888"/>
+    </marker>
+    <marker id="ragrn" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <path d="M0,0 L8,3 L0,6 z" fill="#1a8a1a"/>
+    </marker>
+    <marker id="rared" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <path d="M0,0 L8,3 L0,6 z" fill="#c00"/>
+    </marker>
+  </defs>
+
+  <!-- Actor boxes -->
+  <rect x="10"  y="10" width="110" height="40" rx="6" fill="#eef"    stroke="#88c" stroke-width="1.5"/>
+  <text x="65"  y="28" text-anchor="middle" font-weight="bold" fill="#448" font-size="12">Browser</text>
+  <text x="65"  y="43" text-anchor="middle" fill="#448" font-size="10">(embedding site)</text>
+
+  <rect x="255" y="10" width="130" height="40" rx="6" fill="#fffbe6" stroke="#c90" stroke-width="1.5"/>
+  <text x="320" y="28" text-anchor="middle" font-weight="bold" fill="#a60" font-size="12">caddr.org</text>
+  <text x="320" y="43" text-anchor="middle" fill="#a60" font-size="10">server</text>
+
+  <rect x="510" y="10" width="120" height="40" rx="6" fill="#fff3f3" stroke="#e88" stroke-width="1.5"/>
+  <text x="570" y="28" text-anchor="middle" font-weight="bold" fill="#c44" font-size="12">Script Host</text>
+  <text x="570" y="43" text-anchor="middle" fill="#c44" font-size="10">github.io, etc.</text>
+
+  <!-- Lifelines -->
+  <line x1="65"  y1="50" x2="65"  y2="390" stroke="#aac" stroke-width="1" stroke-dasharray="4,3"/>
+  <line x1="320" y1="50" x2="320" y2="390" stroke="#ca9" stroke-width="1" stroke-dasharray="4,3"/>
+  <line x1="570" y1="50" x2="570" y2="390" stroke="#e99" stroke-width="1" stroke-dasharray="4,3"/>
+
+  <!-- Step 1: Browser → caddr.org -->
+  <line x1="70" y1="90" x2="318" y2="90" stroke="#555" stroke-width="1.5" marker-end="url(#ra)"/>
+  <text x="159" y="83" text-anchor="middle" fill="#333" font-size="11" font-weight="bold">① GET [hash].caddr.org/?src=…</text>
+
+  <!-- Step 2: caddr.org → Browser (return) -->
+  <text x="193" y="118" text-anchor="middle" fill="#555" font-size="11">② returns minimal page</text>
+  <text x="193" y="131" text-anchor="middle" fill="#555" font-size="10" font-style="italic">&lt;script integrity="sha256-…" src="…"&gt;</text>
+  <line x1="315" y1="143" x2="72" y2="143" stroke="#888" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#raret)"/>
+
+  <!-- Step 3: Browser → Script Host -->
+  <line x1="70" y1="185" x2="568" y2="185" stroke="#555" stroke-width="1.5" marker-end="url(#ra)"/>
+  <text x="336" y="177" text-anchor="middle" fill="#333" font-size="11" font-weight="bold">③ fetch script (src URL)</text>
+
+  <!-- Step 4: Script Host → Browser (return) -->
+  <line x1="565" y1="225" x2="72" y2="225" stroke="#888" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#raret)"/>
+  <text x="318" y="217" text-anchor="middle" fill="#555" font-size="11">④ JS file bytes returned</text>
+
+  <!-- SRI check box in the browser lifeline area -->
+  <rect x="10" y="255" width="130" height="48" rx="4" fill="#fff8e1" stroke="#ffa726" stroke-width="1.5"/>
+  <text x="75" y="273" text-anchor="middle" fill="#e65100" font-size="10" font-weight="bold">⑤ SRI check</text>
+  <text x="75" y="287" text-anchor="middle" fill="#e65100" font-size="9">SHA-256(bytes) == hash?</text>
+
+  <!-- Pass path -->
+  <line x1="75" y1="303" x2="75" y2="338" stroke="#1a8a1a" stroke-width="1.5" marker-end="url(#ragrn)"/>
+  <rect x="10" y="338" width="130" height="34" rx="4" fill="#e8f5e9" stroke="#66bb6a" stroke-width="1.5"/>
+  <text x="75" y="354" text-anchor="middle" fill="#2e7d32" font-size="10" font-weight="bold">✓ Execute</text>
+  <text x="75" y="367" text-anchor="middle" fill="#2e7d32" font-size="9">[hash].caddr.org origin</text>
+
+  <!-- Fail path (branch right) -->
+  <line x1="140" y1="279" x2="200" y2="279" stroke="#c00" stroke-width="1.5" stroke-dasharray="4,2" marker-end="url(#rared)"/>
+  <text x="170" y="272" text-anchor="middle" fill="#c00" font-size="10">no match</text>
+  <rect x="200" y="263" width="100" height="32" rx="4" fill="#fce4ec" stroke="#ef5350" stroke-width="1.5"/>
+  <text x="250" y="278" text-anchor="middle" fill="#b71c1c" font-size="10" font-weight="bold">✗ Blocked</text>
+  <text x="250" y="290" text-anchor="middle" fill="#b71c1c" font-size="9">SRI violation</text>
+
+  <!-- note: origin is content-addressed -->
+  <text x="320" y="330" text-anchor="middle" fill="#888" font-size="10" font-style="italic">caddr.org never hosts any scripts —</text>
+  <text x="320" y="343" text-anchor="middle" fill="#888" font-size="10" font-style="italic">it only pins a URL to its hash.</text>
+</svg>
+<figcaption>Request flow. caddr.org acts as a thin relay. The browser's built-in <a href="https://developer.mozilla.org/en-US/docs/Web/Security/Subresource_Integrity">Subresource Integrity</a> (SRI) check ensures the fetched bytes match the hash in the subdomain before execution.</figcaption>
+</figure>
 
 <p>
 	Note that the embedding website is still "responsible" for hosting the contents of the script that is to be loaded— none of the scripts are hosted on caddr.org.
 </p>
 
 <p>
-	If you examine the source code of an actual page, you'll see that it's slightly different from what is described above. The script tags are generated dynamically in Javascript so that it can fall-back to several potential sources in the case of failure. 
+	If you examine the source code of an actual page, you'll see that it's slightly different from what is described above. The script tags are generated dynamically in Javascript so that it can fall-back to several potential sources in the case of failure.
 </p>
 
 <h3>security</h3>
+
 
 <p>
 	Ultimately we would like browsers to natively implement resolvers for urls that are in the format of <tt>*.caddr.org</tt>, similar to existing built-in pages such as <tt>about:blank</tt>. If you work on a browser, or know anyone who does, help towards native implementations would be much appreciated!
 </p>
 <p>
-	Since October 11, 2023, *.caddr.org has been added to the <a href="https://hstspreload.org/?domain=caddr.org">HSTS Preload List</a> which will force it to be loaded with HTTPS. DNSSEC is also enabled for the domain. Content-Security-Policy is used to enforce the contnets of the page through the headers. 
+	Since October 11, 2023, *.caddr.org has been added to the <a href="https://hstspreload.org/?domain=caddr.org">HSTS Preload List</a> which will force it to be loaded with HTTPS. DNSSEC is also enabled for the domain. Content-Security-Policy is used to enforce the contents of the page through the headers.
 </p>
 <p>
-	A <a href="https://github.com/caddr-origin/browser-extension">browser extension</a> has been developed to serve as an additional layer of security that guards against compromises of the caddr.org domain. 
+	A <a href="https://github.com/caddr-origin/browser-extension">browser extension</a> has been developed to serve as an additional layer of security that guards against compromises of the caddr.org domain.
 </p>
 
 <p>
-	We would like to get <tt>caddr.org</tt> added to the <a href="https://publicsuffix.org/">public suffix list</a>, help on putting together a submission would also be appreciated. 
+	We would like to get <tt>caddr.org</tt> added to the <a href="https://publicsuffix.org/">public suffix list</a>, help on putting together a submission would also be appreciated.
 </p>
 <p>
-	The domain has been renewed ahead of time for 10 years, but as a piece of web infrastructure, it might be ideal if stewardship could be transferred to a credible organization. 
+	The domain has been renewed ahead of time for 10 years, but as a piece of web infrastructure, it might be ideal if stewardship could be transferred to a credible organization.
 </p>
 
 <p>
-	
+	At some point in the future, it may be possible that vulnerabilities are discovered in SHA-256 that compromise its viability as the basis for a content-addressing scheme. However the only other browser-supported hashing schemes SHA-386 and SHA-512 are not viable alternatives given the maximum length of a subdomain is 63 letters (<a href="https://www.ietf.org/rfc/rfc1035.txt">RFC-1035</a>). This is also what necessitates the current base32 encoding (as regular hexadecimal would require 64 letters).
 </p>
-<p>
-	At some point in the future, it may be possible that vulnerabilities are discovered in SHA-256 that compromise its viability as the basis for a content-addressing scheme. However the only other browser-supported hashing schemes SHA-386 and SHA-512 are not viable alternatives given the maximum length of a subdomain is 63 letters (<a href="https://www.ietf.org/rfc/rfc1035.txt">RFC-1035</a>). This is also what necessitates the current base32 encoding (as regular hexadecimal would require 64 letters). 
-</p>
+
+<!-- DIAGRAM 6: Why base32 and not hex -->
+<figure class="diagram">
+<svg viewBox="0 0 660 160" xmlns="http://www.w3.org/2000/svg" font-family="sans-serif" font-size="12">
+  <text x="10" y="20" font-weight="bold" fill="#333" font-size="13">Why base32 encoding?</text>
+
+  <!-- hex row -->
+  <text x="10" y="52" fill="#555">hex (64 chars):</text>
+  <!-- 64-char bar, red, hits limit marker -->
+  <rect x="120" y="38" width="410" height="22" rx="3" fill="#fdd" stroke="#e88" stroke-width="1"/>
+  <text x="128" y="53" fill="#a00" font-family="monospace" font-size="10">4e0e46c842888a626445f179e203c5b8622fd17ce2b2b16ab1bfb6e1fb80e7d3</text>
+  <text x="534" y="52" fill="#c00" font-weight="bold" font-size="18">✗</text>
+  <!-- limit tick at 63 chars -->
+  <line x1="498" y1="34" x2="498" y2="65" stroke="#c00" stroke-width="2" stroke-dasharray="3,2"/>
+  <text x="500" y="32" fill="#c00" font-size="10">63-char limit</text>
+
+  <!-- base32 row -->
+  <text x="10" y="92" fill="#555">base32 (52 chars):</text>
+  <!-- 52-char bar, green, well within limit -->
+  <rect x="120" y="78" width="340" height="22" rx="3" fill="#dfd" stroke="#8e8" stroke-width="1"/>
+  <text x="128" y="93" fill="#1a8a1a" font-family="monospace" font-size="10">jyhensccrcfgezcf6f46ea6fxbrc7ul44kzlc2vrx63od64a47jq</text>
+  <text x="468" y="93" fill="#1a8a1a" font-weight="bold" font-size="16">✓</text>
+  <!-- same limit marker -->
+  <line x1="498" y1="74" x2="498" y2="105" stroke="#c00" stroke-width="2" stroke-dasharray="3,2"/>
+
+  <!-- ruler for base32 width -->
+  <line x1="120" y1="118" x2="460" y2="118" stroke="#1a8a1a" stroke-width="1"/>
+  <line x1="120" y1="113" x2="120" y2="123" stroke="#1a8a1a" stroke-width="1"/>
+  <line x1="460" y1="113" x2="460" y2="123" stroke="#1a8a1a" stroke-width="1"/>
+  <text x="290" y="133" text-anchor="middle" fill="#1a8a1a" font-size="11">52 chars — 11 chars to spare</text>
+
+  <!-- label for limit line -->
+  <text x="500" y="120" fill="#c00" font-size="10">← DNS max</text>
+  <text x="500" y="132" fill="#c00" font-size="10">  63 chars</text>
+</svg>
+<figcaption>Base32 encodes SHA-256 in 52 characters, fitting within the 63-character DNS subdomain limit (RFC-1035). Hex would need 64 — one over the limit.</figcaption>
+</figure>
 
 <h3>get started</h3>
 
 <p>
-	Below is a simple tool where you can paste in the URL for some script file and it will automatically hash the contents and redirect you to the equivalent content-addressed caddr.org page. 
+	Below is a simple tool where you can paste in the URL for some script file and it will automatically hash the contents and redirect you to the equivalent content-addressed caddr.org page.
 </p>
 
 <form method="GET" action="/">
@@ -110,7 +357,7 @@
 </form>
 
 <p>
-	Alternatively, you can manually calculate the subdomain from a local file by running the following shell script. 
+	Alternatively, you can manually calculate the subdomain from a local file by running the following shell script.
 </p>
 
 <pre>
@@ -129,7 +376,7 @@ sha256sum FILENAME.js | awk '{ print $1 }' | xxd -r -p | base32 | sed 's/=//g'
 	const srcUrl = new URLSearchParams(location.search).get('src');
 	if(srcUrl){
 		getHash32(srcUrl).then(hash32 => {
-			location.href = 'https://' + hash32 + '.caddr.org/' + 
+			location.href = 'https://' + hash32 + '.caddr.org/' +
 				location.search
 				.replaceAll('%3A', ':')
 				.replaceAll('%2F', '/')
